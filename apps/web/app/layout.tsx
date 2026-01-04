@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { ReduxProvider } from "@/lib/store/redux-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +36,11 @@ export default function RootLayout({
         className={`${inter_Tight.variable} ${inter_Tight.variable} antialiased`}
       >
         <ReduxProvider>
-        {children}
+          <SidebarProvider>
+              {children}
+              <Toaster />
+            {/* <SidebarTrigger /> */}
+          </SidebarProvider>
         </ReduxProvider>
       </body>
     </html>

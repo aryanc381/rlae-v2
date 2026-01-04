@@ -45,7 +45,7 @@ router.post('/exceltojson', upload.single("file"), async(req, res) => {
     const sheetName = Object.keys(workbook)[0];
     const rows = workbook[sheetName];
     if(!rows || rows.length === 0) {
-        return res.json({ status: 404, msg: 'Excel Sheet is empty.'});
+        return res.json({ status: 404, msg: 'Excel Sheet is empty / invalid.'});
     }
 
     const validRows: any[] = [];
@@ -58,6 +58,8 @@ router.post('/exceltojson', upload.single("file"), async(req, res) => {
     });
 
     return res.json({
+        status: 200,
+        msg: 'Excel file uploaded.',
         total_rows: rows.length,
         valid_rows: validRows,
         invalid_rows: invalidRows,

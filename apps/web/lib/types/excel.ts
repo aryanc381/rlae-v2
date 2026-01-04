@@ -12,6 +12,8 @@ export interface IExcelRow {
 }
 
 export interface IExcelResponse {
+    status: number;
+    msg: string;
     total_rows: number;
     valid_rows: IExcelRow[];
     invalid_rows: IExcelRow[];

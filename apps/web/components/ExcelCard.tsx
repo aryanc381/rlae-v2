@@ -3,17 +3,22 @@ import axios from "axios";
 import { useRef } from "react";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { uploadFailure, uploadStart, uploadSuccess } from "@/lib/store/slice/excelSlice";
+
 
 export default function Excel2JSON() {
     const file_input_ref = useRef<HTMLInputElement | null>(null);
+    const dispatch = useAppDispatch();
+    const router = useRouter();
 
     const handleClick = () => {
         file_input_ref.current?.click();
@@ -29,13 +34,20 @@ export default function Excel2JSON() {
         formData.append("file", file);
 
         try {
+            dispatch(uploadStart());
             const response = await axios.post('http://localhost:5000/v2/api/data/exceltojson', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
             });
+            toast.success(response.data.msg);
+            if(response.data.status === 200) {
+                router.push('/dashboard');
+                dispatch(uploadSuccess(response.data));
+            }
             console.log('Upload success: ' + response.data);
         } catch(err) {
+            dispatch(uploadFailure("Upload Failed"));
             console.error('Upload failed: ' + err);
         }
     }
@@ -54,8 +66,7 @@ export default function Excel2JSON() {
                         <Button className="rounded-[0.15vw] cursor-pointer" variant={'secondary'}>Go Back</Button>
                         <Button className="rounded-[0.15vw] cursor-pointer" onClick={handleClick}>Add .xlsx / xls file</Button>
                     </div>
-                </CardContent>
-                
+                </CardContent>  
             </Card>
         </div>
     );
