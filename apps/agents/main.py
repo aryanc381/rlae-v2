@@ -2,12 +2,13 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+from typing import List, Literal
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 app = FastAPI(title="Python Server")
 
-
+#  these are te classes
 class EmbedRequest(BaseModel):
     texts: list[str]
 
@@ -18,11 +19,15 @@ class Message(BaseModel):
     role: Literal["system", "user", "assistant"]
     payload: str
 
-class SelfCorrection(BaseModel):
-    conversations: list[list[role: str, payload: str]]
-    existing_params: list[use_case, conv_rate, qualities, specs, outliers, rfc]
+class ExistingParams(BaseModel):
+    use_case: str
+    conv_rate: float
+    qualities: List[str]
+    specs: List[str]
+    outliers: List[str]
+    rfc: str
 
-
+#  these are the api-endpoints
 @app.post('/embed', response_model=EmbedResponse)
 def embed(req: EmbedRequest):
     embeddings = model.encode(
@@ -30,5 +35,3 @@ def embed(req: EmbedRequest):
     ).tolist()
     return  { "embeddings": embeddings, "length": len(embeddings) }
 
-#  context, existing-params
-@app.post('/self-correction', )

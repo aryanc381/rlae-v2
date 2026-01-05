@@ -11,7 +11,7 @@ const router: Router = express.Router();
 const inputObj = zod.object({
     conversation: zod.array(zod.object({role: zod.string(), payload: zod.string()})),
     use_case_id: zod.number().optional(),
-    conv_rate: zod.number().min(0).max(1)
+    conv_rate: zod.number().min(0).max(1),
 });
 
 router.post('/self-reflection', async (req, res) => {
@@ -67,7 +67,7 @@ router.post('/self-reflection', async (req, res) => {
     } else {
         const prompt = await useCaseAnalysisPromptGenerator(conversation);
         const create = await callSarvam(prompt);
-       const { category, use_case, qualities, specs, outliers } = create;
+        const { category, use_case, qualities, specs, outliers } = create;
         const generate = await axios.post('http://localhost:5000/v2/api/database/create-new-kb', {
             category: category,
             use_case: use_case,
@@ -80,7 +80,7 @@ router.post('/self-reflection', async (req, res) => {
             status: 200, 
             msg: 'Use-case created by Conversation Analysis.',
             action: {
-                creation: generate
+                creation: generate.data
             }
         });
     }

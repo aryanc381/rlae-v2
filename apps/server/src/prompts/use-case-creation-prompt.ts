@@ -33,8 +33,26 @@ From the conversation patterns, infer and generate:
    → High-level domain (e.g., "Debt Collection", "Loan Follow-up")
 
 2. use_case  
-   → Specific scenario (e.g., "First-time payment reminder",
-     "Overdue EMI negotiation", "Partial payment follow-up")
+→ A short, canonical use-case name that identifies this scenario {
+    RULES (MANDATORY):
+    - 3 to 6 words ONLY
+    - Title Case
+    - No punctuation
+    - No filler words (avoid: user, conversation, discussion, call)
+    - Must describe the core payment scenario
+    - Must be stable and reusable across similar conversations
+
+    GOOD examples:
+    - "Overdue EMI Negotiation"
+    - "Job Loss Payment Deferral"
+    - "Partial Payment Follow Up"
+    - "First Reminder Financial Hardship"
+
+    BAD examples:
+    - "User says they cannot pay right now"
+    - "Conversation about overdue payment"
+    - "Debt collection discussion"
+}
 
 3. qualities (array)
    → Personality traits the agent MUST have to succeed in this use-case  
@@ -46,6 +64,9 @@ From the conversation patterns, infer and generate:
 
 5. outliers (array)
    → Safety, compliance, or edge-case constraints that must NEVER be violated
+
+6. conv_rate (float value)
+   → What would be the conversion rate = (0.30)*conversational_quality + (0.50)*goal_completion + (0.20)*compliance
 
 =================================================
 STRICT RULES
@@ -66,7 +87,8 @@ Return ONLY a valid JSON object in the following format:
   "use_case": string,
   "qualities": [string],
   "specs": [string],
-  "outliers": [string]
+  "outliers": [string],
+  "conv_rate": float
 }
 
 Do NOT include explanations, comments, or extra text.

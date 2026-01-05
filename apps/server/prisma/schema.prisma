@@ -23,7 +23,6 @@ model KB_MAIN {
   conv_rate       Float 
   archive         Int[] 
   RFC             String
-  @@unique([category, use_case])
 }
 
 model KB_ARCHIVE {
