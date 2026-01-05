@@ -9,7 +9,6 @@ import SRARouter from './agents/self-reflect.agents.js';
 const router: Router = express.Router();
 
 router.use('/database', excelRouter, createUCRouter, updateUCRouter);
-router.use('/darwin', createUCRouter);
-router.use('/agents', updateUCRouter);
+router.use('/agents', SRARouter);
 
 export default router;

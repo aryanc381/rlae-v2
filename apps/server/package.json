@@ -24,6 +24,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "multer": "^2.0.2",
+    "sarvamai": "^1.1.0",
     "zod": "^4.3.4"
   },
   "devDependencies": {
