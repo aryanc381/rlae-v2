@@ -3,7 +3,6 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -13,10 +12,40 @@ import { VscCallOutgoing } from "react-icons/vsc";
 import { Button } from "./ui/button";
 import { selectUser } from "@/lib/store/slice/excelSlice";
 import { toast } from "sonner";
+import axios from "axios";
+import { setPromptConfig } from "@/lib/store/slice/promptSlice";
 
 export default function ExcelTable() {
     const sheet = useAppSelector((state) => state.excel.data?.all_rows);
     const dispatch = useAppDispatch();
+    async function promptCreator(input_context: string, data: any) {
+        return toast.promise(
+            axios.post('http://localhost:5000/v2/api/agents/context-mapper', {
+            context: input_context
+        }), 
+        {
+            loading: 'Fetching context...',
+            success: (res) => {
+                dispatch(selectUser(data));
+                dispatch(setPromptConfig({
+                    qualities: res.data.qualities ?? [],
+                    specifications: res.data.specifications ?? [],
+                    outliers: res.data.outliers ?? [],
+                    matchedUseCaseId: res.data.matched_use_case_id ?? "",
+                    matchedUseCase: res.data.matched_use_case ?? "",
+                    similarity: res.data.theta ?? 0
+                }));
+                return res.data.msg;
+                
+            },
+            error: () => 'Backend not available.'
+        }
+    );
+        
+        
+    }
+
+    
     return(
         <div className=" border overflow-x-auto overflow-y-auto [scrollbar-width:none] h-[22.5vw]">
             <Table>
@@ -49,7 +78,7 @@ export default function ExcelTable() {
                         <TableCell>{data.due}</TableCell>
                         <TableCell>{data.status}</TableCell>
                         <TableCell>{data.followup_count}</TableCell>
-                        <TableCell><Button className="rounded-[0.10vw] cursor-pointer" onClick={() => {dispatch(selectUser(data)); toast.success('User selected.')}}><VscCallOutgoing /></Button></TableCell>
+                        <TableCell><Button className="rounded-[0.10vw] cursor-pointer" onClick={() => {promptCreator(data.context, data)}}><VscCallOutgoing /></Button></TableCell>
                     </TableRow>
                     ))}
                 </TableBody>

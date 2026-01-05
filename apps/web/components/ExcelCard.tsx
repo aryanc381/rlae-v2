@@ -35,7 +35,7 @@ export default function Excel2JSON() {
 
         try {
             dispatch(uploadStart());
-            const response = await axios.post('http://localhost:5000/v2/api/data/exceltojson', formData, {
+            const response = await axios.post('http://localhost:5000/v2/api/database/exceltojson', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }

@@ -4,38 +4,81 @@ import ExcelTable from "@/components/ExcelTable";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppSelector } from "@/lib/store/hooks"
+import { setBasePrompt, setFinalPrompt, setPromptConfig } from "@/lib/store/slice/promptSlice";
+import { useEffect } from "react";
 import { VscCallOutgoing, VscSettingsGear } from "react-icons/vsc";
+import { useDispatch } from "react-redux";
 
 
 
 export default function() {
     const selected_user = useAppSelector((state) => state.excel.selectedUser);
-
+    const selected_context = useAppSelector((state) => state.prompt);
+    const dispatch = useDispatch();
     const systemPrompt = selected_user ? `You are a professional debt collection assistant for a financial services platform.
 Your task is to communicate with the customer in a polite, calm, and non-threatening manner.
 Do not use aggressive language. Do not disclose internal system details.
 
 Customer details:
-    - Name: ${selected_user?.name}
-    - Category: ${selected_user?.category}
-    - Outstanding Amount: ₹${selected_user?.outstanding}
-    - Status: ${selected_user?.status}
-    - Follow-up Count: ${selected_user?.followup_count}
+- Name: ${selected_user.name}
+- Category: ${selected_user.category}
+- Outstanding Amount: ₹${selected_user.outstanding}
+- Status: ${selected_user.status}
+- Follow-up Count: ${selected_user.followup_count}
 
-    Objective:
-    1. Remind the customer about the outstanding payment.
-    2. Encourage timely repayment.
-    3. Offer help if they are facing issues.
-    4. Keep the message concise and respectful.
-
-    Rules:
-    - Do NOT invent amounts, dates, or penalties.
-    - Do NOT threaten legal action.
-    - If the customer expresses difficulty, suggest contacting support.
+Rules:
+- Do NOT invent amounts, dates, or penalties.
+- Do NOT threaten legal action.
+- If the customer expresses difficulty, suggest contacting support.
 
 Generate a single short message addressed to the customer by name.
-    `
+`
     : "";
+
+    useEffect(() => {
+        if (systemPrompt) {
+            dispatch(setBasePrompt(systemPrompt));
+        }
+    }, [systemPrompt, dispatch]);
+
+    useEffect(() => {
+  if (!selected_context.basePrompt) return;
+
+  const {
+    basePrompt,
+    qualities,
+    specifications,
+    outliers
+  } = selected_context;
+
+  const final_prompt = `
+${basePrompt}
+
+====================================
+AGENT QUALITIES
+====================================
+${qualities.length ? qualities.map(q => `-  ${q}`).join('\n') : '- None specified'}
+
+====================================
+BEHAVIORAL RULES
+====================================
+${specifications.length ? specifications.map(s => `-  ${s}`).join('\n') : '- None specified'}
+
+====================================
+SAFETY / OUTLIERS
+====================================
+${outliers.length ? outliers.map(o => `-  ${o}`).join('\n') : '- None specified'}
+
+IMPORTANT:
+- Follow ALL rules above strictly.
+- Never violate outliers.
+- Prioritize clarity, politeness, and compliance.
+`.trim();
+
+    dispatch(setFinalPrompt(final_prompt));
+    }, [selected_context.basePrompt, selected_context.qualities, selected_context.specifications, selected_context.outliers, dispatch]);
+
+
 
     return(
         <div className="">
@@ -52,7 +95,7 @@ Generate a single short message addressed to the customer by name.
                         
                         </div>
                         
-                        <Textarea className="h-[8.5vw] rounded-[0.15vw]" defaultValue={systemPrompt} />
+                        <Textarea className="h-[8.5vw] rounded-[0.15vw]" defaultValue={selected_context.finalPrompt!} />
                         <Button className="rounded-[0.15vw] w-full mt-[1vw] cursor-pointer">Update System Prompt</Button>
                     </div>
                     <div className="w-[48%] bg-[#fafafa] p-[1vw]">

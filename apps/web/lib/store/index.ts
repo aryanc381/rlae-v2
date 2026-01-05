@@ -1,8 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import excelReducer from './slice/excelSlice';
+import promptReducer from './slice/promptSlice';
+
 export const store = configureStore({
     reducer: {
-        excel: excelReducer
+        excel: excelReducer,
+        prompt: promptReducer
     }
 });
 
