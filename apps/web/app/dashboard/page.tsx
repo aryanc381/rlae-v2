@@ -63,7 +63,7 @@ Generate a single short message addressed to the customer by name.
                                 <p>Name : {selected_user?.name || "--"}</p>
                                 <p>Context : {selected_user?.context || "--"}</p>
                                 <p>Phone : {selected_user?.phone || "--"}</p>
-                                <p>Status : {selected_user?.status || "--"}</p>
+                                <p className="bg-gray-300 w-[10vw]">Status : {selected_user?.status || "--"}</p>
                             </div>
                             
                             <div className="flex mt-[1vw] gap-[0.5vw]">
@@ -86,5 +86,5 @@ Generate a single short message addressed to the customer by name.
                 </div>
             </div>
         </div>
-    )
+    );
 }

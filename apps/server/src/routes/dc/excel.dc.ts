@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import zod from 'zod';
-import { upload } from '../middleware/upload.middleware.js';
+import { upload } from '../../middleware/upload.middleware.js';
 
 //@ts-ignore
 import excelToJson from '@boterop/convert-excel-to-json';
