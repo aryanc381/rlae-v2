@@ -21,8 +21,12 @@ Customer details:
 - Name: ${selected_user.name}
 - Category: ${selected_user.category}
 - Outstanding Amount: ₹${selected_user.outstanding}
+- Due Date: ${selected_user.due}
 - Status: ${selected_user.status}
 - Follow-up Count: ${selected_user.followup_count}
+- Email: ${selected_user.email}
+- Phone: ${selected_user.phone}
+
 
 Rules:
 - Do NOT invent amounts, dates, or penalties.
@@ -114,8 +118,7 @@ IMPORTANT:
                                         <p>Call {selected_user?.phone || " --"}</p>
                                     </div>
                                 </Button>
-                            </div>
-                            
+                            </div>  
                         </div>
                     </div> 
                 </div>
