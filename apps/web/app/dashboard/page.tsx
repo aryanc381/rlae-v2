@@ -9,8 +9,6 @@ import { useEffect } from "react";
 import { VscCallOutgoing, VscSettingsGear } from "react-icons/vsc";
 import { useDispatch } from "react-redux";
 
-
-
 export default function() {
     const selected_user = useAppSelector((state) => state.excel.selectedUser);
     const selected_context = useAppSelector((state) => state.prompt);
@@ -96,7 +94,7 @@ IMPORTANT:
                         </div>
                         
                         <Textarea className="h-[8.5vw] rounded-[0.15vw]" defaultValue={selected_context.finalPrompt!} />
-                        <Button className="rounded-[0.15vw] w-full mt-[1vw] cursor-pointer">Update System Prompt</Button>
+                        <Button className="rounded-[0.15vw] w-full mt-[1vw] cursor-pointer">Use Agent Configuration</Button>
                     </div>
                     <div className="w-[48%] bg-[#fafafa] p-[1vw]">
                         <p className=" text-black  mb-[1vw]">Debt Collection Agent</p>
@@ -110,12 +108,6 @@ IMPORTANT:
                             </div>
                             
                             <div className="flex mt-[1vw] gap-[0.5vw]">
-                                <Button asChild className="rounded-[0.15vw] cursor-pointer">
-                                    <div className="flex gap-[0.5vw]">
-                                        <VscSettingsGear  />
-                                        <p>Agent Configuration</p>
-                                    </div>
-                                </Button>
                                 <Button asChild className="rounded-[0.15vw] cursor-pointer">
                                     <div className="flex">
                                         <VscCallOutgoing  />
