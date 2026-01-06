@@ -5,14 +5,35 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppSelector } from "@/lib/store/hooks"
 import { setBasePrompt, setFinalPrompt, setPromptConfig } from "@/lib/store/slice/promptSlice";
+import axios from "axios";
 import { useEffect } from "react";
 import { VscCallOutgoing, VscSettingsGear } from "react-icons/vsc";
 import { useDispatch } from "react-redux";
+import { toast } from "sonner";
+
+function toSingleLine(prompt: string) {
+    return prompt.split('\n').map(line => line.trim()).filter(line => line.length > 0).join(' ');
+}
 
 export default function() {
     const selected_user = useAppSelector((state) => state.excel.selectedUser);
     const selected_context = useAppSelector((state) => state.prompt);
     const dispatch = useDispatch();
+
+    async function callHandler(phone: string | null, system_prompt: string | null) {
+        return toast.promise(
+            axios.post('http://localhost:5000/v2/api/agents/call', {
+                prompt: `${system_prompt}`,
+                phone: `${phone}`,
+            }), {
+                loading: 'Dispatching call...', 
+                success: (res) => {
+                    return res.data.msg
+                },
+                error: () => 'Backend not available'
+            }
+        )
+    }
     const systemPrompt = selected_user ? `You are a professional debt collection assistant for a financial services platform.
 Your task is to communicate with the customer in a polite, calm, and non-threatening manner.
 Do not use aggressive language. Do not disclose internal system details.
@@ -77,7 +98,10 @@ IMPORTANT:
 - Prioritize clarity, politeness, and compliance.
 `.trim();
 
-    dispatch(setFinalPrompt(final_prompt));
+    const prompt_single_line = toSingleLine(final_prompt);
+    console.log(prompt_single_line);
+
+    dispatch(setFinalPrompt(prompt_single_line));
     }, [selected_context.basePrompt, selected_context.qualities, selected_context.specifications, selected_context.outliers, dispatch]);
 
 
@@ -112,7 +136,7 @@ IMPORTANT:
                             </div>
                             
                             <div className="flex mt-[1vw] gap-[0.5vw]">
-                                <Button asChild className="rounded-[0.15vw] cursor-pointer">
+                                <Button asChild className="rounded-[0.15vw] cursor-pointer" onClick={() => {callHandler(selected_user?.phone as string, selected_context?.finalPrompt as string)}}>
                                     <div className="flex">
                                         <VscCallOutgoing  />
                                         <p>Call {selected_user?.phone || " --"}</p>

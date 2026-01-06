@@ -8,7 +8,8 @@ dotenv.config();
 const router: Router = express.Router();
 
 const inputObj = zod.object({
-    prompt: zod.string()
+    prompt: zod.string(),
+    phone: zod.string()
 });
 
 const vapi = new VapiClient({ token: process.env.VAPI_API_KEY! });
@@ -25,27 +26,29 @@ router.post("/call", async (req, res) => {
         });
     }
 
-    const { prompt } = parsed.data;
+    const { prompt, phone } = parsed.data;
+    console.log('Prompt: ' + prompt);
     
     const assistant = await vapi.assistants.create({
         name: "Debt Collection Assistant",
-        firstMessage: "Hey, I've called regarding the debt you've taken from Riverline AI, do you have five mins?",
+        firstMessage: "Hey, I've called regarding the debt you've taken from Riverline AI, do you have five minutes?",
         model: {
             provider: "openai",
             model: "gpt-4o",
             messages: [{ role: "system", content: prompt }]
         },
-        voice: { provider: '11labs', voiceId: 'bIHbv24MWmeRgasZH58o' },
+        voice: { provider: '11labs', voiceId: 'wlmwDR77ptH6bKHZui0l' },
     });
     console.log("ASSISTANT-ID: " + assistant.id);
 
     const call = await vapi.calls.create({
         assistantId: assistant.id,
         phoneNumberId: '510addb8-b00c-4e52-a309-5c1b9290c3b7',
-        customer: { number: '+919049122622' },
+        customer: { number: phone },
     });
     //@ts-ignore
     console.log("CALL-ID: " + call.id);
+
 
     return res.json({
         status: 200,
@@ -54,10 +57,10 @@ router.post("/call", async (req, res) => {
         call_id: call.id,
         assistant_id: assistant.id
     });
+    
     } catch(err) {
         return res.json({
             status: 500,
-            msg: 'Internal Server Error.'
         });
     } 
 });
