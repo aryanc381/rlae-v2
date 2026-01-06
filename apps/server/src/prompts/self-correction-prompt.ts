@@ -88,7 +88,6 @@ OUTPUT FORMAT (STRICT JSON ONLY)
 Return ONLY a valid JSON object in the following format, no additional necessities:
 
 {
-  "existingVariantId": number,
   "qualities": [string],
   "specs": [string],
   "outliers": [string],

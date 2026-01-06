@@ -22,17 +22,17 @@ const items = [
   },
   {
     title: "Logs",
-    url: "/onboarding",
+    url: "/logs",
     icon: Inbox,
   },
   {
     title: "Archive",
-    url: "#",
+    url: "/archive",
     icon: Settings,
   },
   {
     title: "Finetuning",
-    url: "#",
+    url: "/search",
     icon: Search,
   }
 ]

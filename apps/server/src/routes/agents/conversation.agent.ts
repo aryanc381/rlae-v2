@@ -12,7 +12,7 @@ const inputObj = zod.object({
     phone: zod.string()
 });
 
-const vapi = new VapiClient({ token: process.env.VAPI_API_KEY! });
+export const vapi = new VapiClient({ token: process.env.VAPI_API_KEY! });
 
 router.post("/call", async (req, res) => {
   try {
@@ -31,7 +31,7 @@ router.post("/call", async (req, res) => {
     
     const assistant = await vapi.assistants.create({
         name: "Debt Collection Assistant",
-        firstMessage: "Hey, I've called regarding the debt you've taken from Riverline AI, do you have five minutes?",
+        firstMessage: "Hello, I’m calling from Aryan Bank regarding an outstanding balance on your account. Do you have a few minutes to speak right now?",
         model: {
             provider: "openai",
             model: "gpt-4o",
@@ -43,6 +43,23 @@ router.post("/call", async (req, res) => {
 
     const call = await vapi.calls.create({
         assistantId: assistant.id,
+        assistant: {
+            "name": "Debt Collection Agent",
+            "credentialIds": [assistant.id],
+            model: {
+                provider: "openai",
+                model: "gpt-4o",
+                messages: [{ role: "system", content: prompt }]
+            },
+            firstMessage: "Hello, I’m calling from Aryan Bank regarding an outstanding balance on your account. Do you have a few minutes to speak right now?",
+            artifactPlan: {
+                transcriptPlan: {
+                enabled: true,
+                assistantName: "bot",
+                userName: "user"
+                },
+            },
+        },
         phoneNumberId: '510addb8-b00c-4e52-a309-5c1b9290c3b7',
         customer: { number: phone },
     });
