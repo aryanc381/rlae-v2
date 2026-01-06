@@ -4,10 +4,10 @@ import ExcelTable from "@/components/ExcelTable";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppSelector } from "@/lib/store/hooks"
-import { setBasePrompt, setFinalPrompt, setPromptConfig } from "@/lib/store/slice/promptSlice";
+import { setBasePrompt, setFinalPrompt } from "@/lib/store/slice/promptSlice";
 import axios from "axios";
 import { useEffect } from "react";
-import { VscCallOutgoing, VscSettingsGear } from "react-icons/vsc";
+import { VscCallOutgoing } from "react-icons/vsc";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 
@@ -19,6 +19,12 @@ export default function() {
     const selected_user = useAppSelector((state) => state.excel.selectedUser);
     const selected_context = useAppSelector((state) => state.prompt);
     const dispatch = useDispatch();
+
+    async function promptFinalizer() {
+        const prompt_single_line = toSingleLine(selected_context.finalPrompt!);
+        dispatch(setFinalPrompt(prompt_single_line));
+        toast.success('Final Prompt sent to Agent-Context-Memory.')
+    }
 
     async function callHandler(phone: string | null, system_prompt: string | null) {
         return toast.promise(
@@ -97,11 +103,7 @@ IMPORTANT:
 - Never violate outliers.
 - Prioritize clarity, politeness, and compliance.
 `.trim();
-
-    const prompt_single_line = toSingleLine(final_prompt);
-    console.log(prompt_single_line);
-
-    dispatch(setFinalPrompt(prompt_single_line));
+    dispatch(setFinalPrompt(final_prompt));
     }, [selected_context.basePrompt, selected_context.qualities, selected_context.specifications, selected_context.outliers, dispatch]);
 
 
@@ -121,8 +123,8 @@ IMPORTANT:
                         
                         </div>
                         
-                        <Textarea className="h-[8.5vw] rounded-[0.15vw]" defaultValue={selected_context.finalPrompt!} />
-                        <Button className="rounded-[0.15vw] w-full mt-[1vw] cursor-pointer">Use Agent Configuration</Button>
+                        <Textarea className="h-[8.5vw] rounded-[0.15vw]" value={selected_context.finalPrompt!} onChange={(e) => {dispatch(setFinalPrompt(e.target.value))}} defaultValue={selected_context.finalPrompt!} />
+                        <Button className="rounded-[0.15vw] w-full mt-[1vw] cursor-pointer" onClick={() => {promptFinalizer()}}>Use Agent Configuration</Button>
                     </div>
                     <div className="w-[48%] bg-[#fafafa] p-[1vw]">
                         <p className=" text-black  mb-[1vw]">Debt Collection Agent</p>
